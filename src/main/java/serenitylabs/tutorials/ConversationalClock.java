@@ -1,14 +1,16 @@
 package serenitylabs.tutorials;
 
+import java.time.LocalTime;
+
 public class ConversationalClock {
 
-    private final SystemTime now;
+    private TimeTextualiser timeTextualiser;
 
-    public ConversationalClock(SystemTime time) {
-        this.now = time;
+    public ConversationalClock() {
+       timeTextualiser = new TimeTextualiser();
     }
 
-    public String currentTime() {
-        return "it's one o'clock";
+    public String tellTheTimeFor(int hour,int min) {
+        return timeTextualiser.textualise(LocalTime.of(hour, min));
     }
 }
