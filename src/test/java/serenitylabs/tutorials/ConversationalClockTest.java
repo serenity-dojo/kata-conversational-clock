@@ -6,32 +6,46 @@ import com.googlecode.zohhak.api.runners.ZohhakRunner;
 import org.junit.runner.RunWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 @RunWith(ZohhakRunner.class)
 public class ConversationalClockTest {
 
-    @TestWith({
-            "01:00, it's one o'clock",
-    })
-    public void should_tell_the_time_on_the_hour(ConversationalClock clock, String expectedTime) throws Exception {
-        assertThat(clock.currentTime()).isEqualTo(expectedTime);
+    private TimeTellerInEnglish clock = new TimeTellerInEnglish();
+
+    @TestWith(
+            { "1, 00, It's one o'clock"}
+    )
+    public void clock_should_display_the_time_in_hours(int hr, int min, String convertedTime) throws Exception{
+
+        assertThat(clock.converter(hr, min), is(convertedTime));
     }
 
-    /**
-     * Creates an instance of a ConversationalClock, set to a requiredTime
-     *
-     * @link https://github.com/piotrturski/zohhak/blob/master/Full-Guide.md
-     *
-     * @param requiredTime Time in the "HH:mm" format (for example "17:15") coming from the @TestWith
-     * @return an instance of a ConversationalClock, set to a requiredTime
-     */
-    @Coercion
-    public ConversationalClock clockSetTo(String requiredTime) {
-        HourAndMinute time = new HourAndMinute(requiredTime);
+    @TestWith(
+            {
+                "12, 00, It's noon",
+                    "00, 00, It's midnight"
+            }
+    )
 
-        // TODO: how can you control the time?
-        SystemTime systemTime = new SystemTime();
+    public void clock_should_display_the_time_for_noon_and_midnight(int hr, int min, String convertedTime) throws Exception{
 
-        return new ConversationalClock(systemTime);
+        assertThat(clock.converter(hr, min), is(convertedTime));
+    }
+
+    @TestWith(
+            {
+                    "2, 30, It's half past two",
+                    "3, 15, It's quarter past three",
+                    "4, 40, It's twenty to five",
+                    "4, 45, It's quarter to five"
+            }
+    )
+
+    public void clock_should_display_the_time_for_past_to_quarter(int hr, int min, String convertedTime) throws Exception{
+
+        assertThat(clock.converter(hr, min), is(convertedTime));
     }
 }
